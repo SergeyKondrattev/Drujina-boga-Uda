@@ -97,15 +97,6 @@ def open_file_dialog():
             raise AssertionError()
 
 
-def save_file_dialog():
-    """Открывает диалоговое окно выбора имени файла и вызывает
-    функцию считывания параметров системы небесных тел из данного файла.
-    Считанные объекты сохраняются в глобальный список space_objects
-    """
-    out_filename = asksaveasfilename(filetypes=(("Text file", ".txt"),))
-    write_space_objects_data_to_file(out_filename, space_objects)
-
-
 def collision(body, obj):
     global space_objects
     global space
@@ -188,8 +179,6 @@ def main():
 
     load_file_button = tkinter.Button(frame, text="Open file...", command=open_file_dialog)
     load_file_button.pack(side=tkinter.LEFT)
-    save_file_button = tkinter.Button(frame, text="Save to file...", command=save_file_dialog)
-    save_file_button.pack(side=tkinter.LEFT)
 
     displayed_time = tkinter.StringVar()
     displayed_time.set(str(physical_time) + " seconds gone")
