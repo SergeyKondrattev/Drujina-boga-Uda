@@ -24,7 +24,8 @@ time_step = None
 space_objects = []
 """Список космических объектов."""
 
-W = 60E-8
+#W = 60E-8
+W = None
 """Угловая скорость вращения системы Земля-Луна"""
 
 
@@ -36,7 +37,7 @@ def execution():
     """
     global physical_time
     global displayed_time
-    recalculate_space_objects_positions(space_objects, time_step.get(), W)
+    recalculate_space_objects_positions(space_objects, time_step.get(), float(W.get()))
     for body in space_objects:
         update_object_position(space, body)
     physical_time += time_step.get()
@@ -94,15 +95,6 @@ def open_file_dialog():
             raise AssertionError()
 
 
-def save_file_dialog():
-    """Открывает диалоговое окно выбора имени файла и вызывает
-    функцию считывания параметров системы небесных тел из данного файла.
-    Считанные объекты сохраняются в глобальный список space_objects
-    """
-    out_filename = asksaveasfilename(filetypes=(("Text file", ".txt"),))
-    write_space_objects_data_to_file(out_filename, space_objects)
-
-
 def main():
     """Главная функция главного модуля.
     Создаёт объекты графического дизайна библиотеки tkinter: окно, холст, фрейм с кнопками, кнопки.
@@ -113,6 +105,7 @@ def main():
     global time_speed
     global space
     global start_button
+    global W
 
     print('Modelling started!')
     physical_time = 0
@@ -137,10 +130,14 @@ def main():
     scale = tkinter.Scale(frame, variable=time_speed, orient=tkinter.HORIZONTAL)
     scale.pack(side=tkinter.LEFT)
 
+    W = tkinter.DoubleVar()
+    W.set(0.0000006)
+    W_entry = tkinter.Entry(frame, textvariable=W)
+    W_entry.pack(side=tkinter.LEFT)
+
     load_file_button = tkinter.Button(frame, text="Open file...", command=open_file_dialog)
     load_file_button.pack(side=tkinter.LEFT)
-    save_file_button = tkinter.Button(frame, text="Save to file...", command=save_file_dialog)
-    save_file_button.pack(side=tkinter.LEFT)
+
 
     displayed_time = tkinter.StringVar()
     displayed_time.set(str(physical_time) + " seconds gone")
