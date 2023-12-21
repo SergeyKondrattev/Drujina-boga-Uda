@@ -96,7 +96,7 @@ def calculate_force(body, space_objects, W):
     **space_objects** — список объектов, которые воздействуют на тело.
     """
 
-    sf = 4.8e-08
+    sf = 2.4e-08
     body.Fx = body.Fy = 0
     for obj in space_objects:
         if ((body.x - obj.x)**2 + (body.y - obj.y)**2) == 0:
@@ -122,7 +122,7 @@ def move_space_object(body, dt, space_objects, W):
 
     **body** — тело, которое нужно переместить.
     """
-    sf = 4.8e-08
+    sf = 2.4e-08
     if body.m != 0:
         ax = body.Fx / body.m
         body.x += body.Vx * dt + ax * dt**2 / 2
