@@ -112,7 +112,7 @@ def update_object_position(space, body):
         space.coords(body.image, window_width + r, window_height + r,
                      window_width + 2*r, window_height + 2*r)  # положить за пределы окна
     space.coords(body.image, x - r, y - r, x + r, y + r)
-    space.create_oval(x,y,x,y,fill="white")
+    space.image = space.create_oval(x, y, x, y, fill="white")
 
 
 if __name__ == "__main__":
