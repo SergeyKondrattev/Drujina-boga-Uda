@@ -1,6 +1,5 @@
 import tkinter
 from tkinter.filedialog import *
-from math import pi
 # раскомментируйте три строки ниже
 from solar_visuals import * 
 from solar_physics import *
@@ -25,6 +24,10 @@ time_step = None
 space_objects = []
 """Список космических объектов."""
 
+#W = 60E-8
+W = None
+"""Угловая скорость вращения системы Земля-Луна"""
+
 
 def execution():
     """Функция исполнения -- выполняется циклически, вызывая обработку всех небесных тел,
@@ -34,19 +37,14 @@ def execution():
     """
     global physical_time
     global displayed_time
-    recalculate_space_objects_positions(space_objects, time_step.get())
+    recalculate_space_objects_positions(space_objects, time_step.get(), float(W.get()))
     for body in space_objects:
         update_object_position(space, body)
-    for body in space_objects:
-        for obj in space_objects:
-            if not(body is obj) and (body.x - obj.x)**2 + (body.y - obj.y)**2 < (body.R + obj.R)**2 and body.type == obj.type == 'planet':
-                collision(body, obj)
-    
     physical_time += time_step.get()
     displayed_time.set("%.1f" % physical_time + " seconds gone")
 
     if perform_execution:
-        space.after(101 - time_speed, execution)
+        space.after(101 - int(time_speed.get()), execution)
 
 
 def start_execution():
@@ -97,61 +95,6 @@ def open_file_dialog():
             raise AssertionError()
 
 
-def save_file_dialog():
-    """Открывает диалоговое окно выбора имени файла и вызывает
-    функцию считывания параметров системы небесных тел из данного файла.
-    Считанные объекты сохраняются в глобальный список space_objects
-    """
-    out_filename = asksaveasfilename(filetypes=(("Text file", ".txt"),))
-    write_space_objects_data_to_file(out_filename, space_objects)
-
-
-def collision(body, obj):
-    global space_objects
-    global space
-    body_rho = body.m / 4*3 / pi / body.R**3
-    obj_rho = obj.m / 4*3 / pi / obj.R**3
-    
-    """Ищет прямоугольник, внутри которого происходит столкновение"""
-    collision_rect_bottom = max(body.y - body.R, obj.y - obj.R)
-    collision_rect_up = min(body.y + body.R, obj.y + obj.R)
-    collision_rect_left = max(body.x - body.R, obj.x - obj.R)
-    collision_rect_right = min(body.x + body.R, obj.x + obj.R)
-    x0 = (collision_rect_left + collision_rect_right)/2
-    y0 = (collision_rect_up + collision_rect_bottom)/2
-
-    if body.m > obj.m:
-        large = body
-        small = obj
-    else:
-        large = obj
-        small = body
-
-    space.delete(body.image)
-    if body in space_objects:
-        space_objects.remove(body)
-    space.delete(obj.image)
-    if obj in space_objects:
-        space_objects.remove(obj)
-    frag = Fragment()
-    frag.x, frag.y = x0, y0
-    frag.R = (collision_rect_up - collision_rect_bottom + collision_rect_right - collision_rect_left)/1.8
-    frag_rho = (body_rho + obj_rho)/2
-    frag.m = frag_rho * 4/3 * pi * frag.R**3
-    frag.Vx, frag.Vy = small.Vx*1.15, small.Vy*1.15
-    
-    new_planet = Planet()
-    new_planet.m = large.m + small.m - frag.m
-    new_planet.x, new_planet.y = large.x, large.y
-    new_planet.R = large.R * 0.8
-    new_planet.Vx, new_planet.Vy = large.Vx, large.Vy
-    new_planet.color = 'darkolivegreen'
-    create_planet_image(space, new_planet)
-    create_planet_image(space, frag)
-    space_objects.append(new_planet)
-    space_objects.append(frag)
-
-
 def main():
     """Главная функция главного модуля.
     Создаёт объекты графического дизайна библиотеки tkinter: окно, холст, фрейм с кнопками, кнопки.
@@ -162,6 +105,7 @@ def main():
     global time_speed
     global space
     global start_button
+    global W
 
     print('Modelling started!')
     physical_time = 0
@@ -182,12 +126,18 @@ def main():
     time_step_entry = tkinter.Entry(frame, textvariable=time_step)
     time_step_entry.pack(side=tkinter.LEFT)
 
-    time_speed = 60
+    time_speed = tkinter.DoubleVar()
+    scale = tkinter.Scale(frame, variable=time_speed, orient=tkinter.HORIZONTAL)
+    scale.pack(side=tkinter.LEFT)
+
+    W = tkinter.DoubleVar()
+    W.set(0.0000006)
+    W_entry = tkinter.Entry(frame, textvariable=W)
+    W_entry.pack(side=tkinter.LEFT)
 
     load_file_button = tkinter.Button(frame, text="Open file...", command=open_file_dialog)
     load_file_button.pack(side=tkinter.LEFT)
-    save_file_button = tkinter.Button(frame, text="Save to file...", command=save_file_dialog)
-    save_file_button.pack(side=tkinter.LEFT)
+
 
     displayed_time = tkinter.StringVar()
     displayed_time.set(str(physical_time) + " seconds gone")
