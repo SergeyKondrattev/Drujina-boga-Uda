@@ -1,0 +1,4 @@
+
+Star 3E7 green 5.9742E24 0 0 0 0
+
+Planet 8E6 blue 7.36E22 0.4067E9 0 0 1.023E3
