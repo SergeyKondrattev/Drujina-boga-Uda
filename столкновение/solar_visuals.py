@@ -1,10 +1,10 @@
 header_font = "Arial-16"
 """Шрифт в заголовке"""
 
-window_width = 800
+window_width = 1600
 """Ширина окна"""
 
-window_height = 600
+window_height = 700
 """Высота окна"""
 
 scale_factor = None
@@ -60,11 +60,10 @@ def create_star_image(space, star):
 
     **star** — объект звезды.
     """
-    global scale_factor
 
     x = scale_x(star.x)
     y = scale_y(star.y)
-    r = star.R * scale_factor
+    r = star.R
     star.image = space.create_oval([x - r, y - r], [x + r, y + r], fill=star.color)
 
 
@@ -77,11 +76,10 @@ def create_planet_image(space, planet):
 
     **planet** — объект планеты.
     """
-    global scale_factor
 
     x = scale_x(planet.x)
     y = scale_y(planet.y)
-    r = planet.R * scale_factor
+    r = planet.R
     planet.image = space.create_oval([x - r, y - r], [x + r, y + r], fill=planet.color)
 
 
@@ -109,11 +107,12 @@ def update_object_position(space, body):
     """
     x = scale_x(body.x)
     y = scale_y(body.y)
-    r = body.R * scale_factor
+    r = body.R
     if x + r < 0 or x - r > window_width or y + r < 0 or y - r > window_height:
         space.coords(body.image, window_width + r, window_height + r,
                      window_width + 2*r, window_height + 2*r)  # положить за пределы окна
     space.coords(body.image, x - r, y - r, x + r, y + r)
+    space.image = space.create_oval(x, y, x, y, fill="white")
 
 
 if __name__ == "__main__":
