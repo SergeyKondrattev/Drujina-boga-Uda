@@ -1,0 +1,8 @@
+# Луна
+Planet 10 gray 7.35E22 8E8 6.5E8 0 0
+
+# Земля
+Planet 40 blue 5.98E24 0 0 0 0
+
+# Маяк
+Planet 0 blue 0 50E8 0 0 0
